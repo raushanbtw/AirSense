@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import { api } from "./api";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-  const [status, setStatus] = useState("Checking...");
+  const [status, setStatus] = useState("checking...");
 
   useEffect(() => {
     api
       .get("/health")
       .then((res) => setStatus(res.data.status))
-      .catch(() => setStatus("Backend not reachable"));
+      .catch(() => setStatus("not reachable"));
   }, []);
 
   return (
-    <div>
-      <h1>AirSense</h1>
-      <p>Backend status: {status}</p>
+    <div className="app">
+      <Header status={status} />
+      <div className="body">
+        <Sidebar />
+        <Dashboard />
+      </div>
     </div>
   );
 }
