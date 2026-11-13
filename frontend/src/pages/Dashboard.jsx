@@ -1,10 +1,17 @@
+import useLocation from "../hooks/useLocation";
+import LocationCard from "../components/LocationCard";
+
 function Dashboard() {
+  const { coords, error, loading, requestLocation } = useLocation();
+
   return (
     <main className="dashboard">
-      <section className="card">
-        <h2>Current Location</h2>
-        <p>Location information will appear here.</p>
-      </section>
+      <LocationCard
+        coords={coords}
+        error={error}
+        loading={loading}
+        onRequest={requestLocation}
+      />
 
       <section className="card">
         <h2>Air Quality</h2>
