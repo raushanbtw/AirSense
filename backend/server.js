@@ -12,6 +12,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/location", require("./routes/locationRoutes"));
 
 connectMongo();
 
