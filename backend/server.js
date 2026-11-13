@@ -11,6 +11,8 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
+app.use("/api/users", require("./routes/userRoutes"));
+
 connectMongo();
 
 const PORT = process.env.PORT || 5000;
