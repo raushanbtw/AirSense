@@ -2,10 +2,11 @@ import useLocation from "../hooks/useLocation";
 import useEnvironment from "../hooks/useEnvironment";
 import LocationCard from "../components/LocationCard";
 import AqiCard from "../components/AqiCard";
+import AdvisoryCard from "../components/AdvisoryCard";
 import WeatherCard from "../components/WeatherCard";
 import PollutionMap from "../components/PollutionMap";
 
-function Dashboard() {
+function Dashboard({ user }) {
   const location = useLocation();
   const environment = useEnvironment(location.coords);
   const hasLocation = Boolean(location.coords);
@@ -25,6 +26,13 @@ function Dashboard() {
         data={environment.data}
         loading={environment.loading}
         error={environment.error}
+        hasLocation={hasLocation}
+      />
+
+      <AdvisoryCard
+        user={user}
+        data={environment.data}
+        loading={environment.loading}
         hasLocation={hasLocation}
       />
 

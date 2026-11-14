@@ -194,3 +194,74 @@ body {
 .user-marker {
   filter: hue-rotate(150deg) brightness(0.8);
 }
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-btn {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.profile {
+  padding: 24px;
+}
+
+.profile-card {
+  max-width: 480px;
+}
+
+.profile-card form label {
+  display: block;
+  margin: 10px 0;
+  font-size: 0.9rem;
+}
+
+.profile-card form input[type="text"],
+.profile-card form input[type="email"],
+.profile-card form input[type="number"] {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 7px 9px;
+  border: 1px solid #cbd2d9;
+  border-radius: 6px;
+}
+
+.profile-card fieldset {
+  margin: 14px 0;
+  border: 1px solid #dde3ea;
+  border-radius: 6px;
+}
+
+.check {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.success {
+  color: #137333;
+}
+
+.note {
+  background: #e6f2f7;
+  border-left: 4px solid #0b5d7a;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+
+.warning p,
+.note p {
+  margin: 4px 0;
+}
+
+button.secondary {
+  background: #52606d;
+  margin-left: 8px;
+}

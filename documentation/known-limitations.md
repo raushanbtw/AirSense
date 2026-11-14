@@ -73,3 +73,9 @@ These belong to later modules:
 - Route advisory and travel plans (Module 3)
 - Push notifications and trend charts (Module 3)
 - Final integration and testing (Module 4)
+
+- **Sign-in is by email only, with no password.** Anyone who knows an email address can open
+  that profile, including its health settings, and edit it. The lookup also reveals whether
+  an email is registered. This is acceptable for local development with test data only.
+  Before real use it needs a password stored as a hash and a login token checked on every
+  user request.
