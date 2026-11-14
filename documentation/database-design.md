@@ -13,17 +13,11 @@ to a local container.
 
 ## MongoDB: `users` collection
 
-| Field | Type | Rules |
-|---|---|---|
-| `name` | String | Required, trimmed |
-| `email` | String | Required, unique, stored in lowercase |
-| `age` | Number | Optional, 1 to 120 |
-| `healthProfile.asthma` | Boolean | Default false |
-| `healthProfile.elderly` | Boolean | Default false |
-| `healthProfile.children` | Boolean | Default false |
-| `alertPreferences.enabled` | Boolean | Default true |
-| `alertPreferences.aqiThreshold` | Number | 0 to 500, default 100 |
-| `createdAt`, `updatedAt` | Date | Added automatically |
+- Created a test user through `POST /users` and read it back from the `users` collection
+  with `mongosh`. The health profile defaults (`elderly` and `children` false), the alert
+  settings and the `createdAt` and `updatedAt` times were stored. A second request with the
+  same email was rejected with a duplicate error, and an empty body, a malformed ID and an
+  unknown ID each returned the expected error.
 
 ## InfluxDB: bucket `environment_data` (organization `AirSense`)
 
