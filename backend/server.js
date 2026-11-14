@@ -14,6 +14,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/location", require("./routes/locationRoutes"));
 app.use("/api/air-quality", require("./routes/airQualityRoutes"));
+app.use("/api/weather", require("./routes/weatherRoutes"));
 
 connectMongo();
 
