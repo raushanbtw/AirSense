@@ -3,6 +3,7 @@ import useEnvironment from "../hooks/useEnvironment";
 import LocationCard from "../components/LocationCard";
 import AqiCard from "../components/AqiCard";
 import WeatherCard from "../components/WeatherCard";
+import PollutionMap from "../components/PollutionMap";
 
 function Dashboard() {
   const location = useLocation();
@@ -17,6 +18,7 @@ function Dashboard() {
         error={location.error}
         loading={location.loading}
         onRequest={location.requestLocation}
+        onManual={location.setManualLocation}
       />
 
       <AqiCard
@@ -47,6 +49,8 @@ function Dashboard() {
           </p>
         )}
       </section>
+
+      <PollutionMap coords={location.coords} data={environment.data} />
 
       <section className="card">
         <h2>Analytics</h2>

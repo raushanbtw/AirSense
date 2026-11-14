@@ -17,6 +17,7 @@ app.use("/api/air-quality", require("./routes/airQualityRoutes"));
 app.use("/api/weather", require("./routes/weatherRoutes"));
 app.use("/api/traffic", require("./routes/trafficRoutes"));
 app.use("/api/environment", require("./routes/environmentRoutes"));
+app.use("/api/geocode", require("./routes/geocodeRoutes"));
 
 connectMongo();
 

@@ -93,6 +93,8 @@ async function getOpenAqAirQuality(lat, lon) {
         station: station.name,
         stationId: station.id,
         distanceKm: Math.round(station.distanceKm * 10) / 10,
+        stationLatitude: station.coordinates?.latitude ?? null,
+        stationLongitude: station.coordinates?.longitude ?? null,
       };
     }
   });

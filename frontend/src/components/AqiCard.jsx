@@ -1,6 +1,7 @@
 import { aqiCategory, formatTime } from "../utils/aqiColors";
 
 const NAMES = { pm25: "PM2.5", pm10: "PM10", no2: "NO2", o3: "O3", co: "CO", so2: "SO2" };
+const FAR_KM = 25;
 
 function AqiCard({ data, loading, error, hasLocation }) {
   if (!hasLocation) {
@@ -33,6 +34,8 @@ function AqiCard({ data, loading, error, hasLocation }) {
   const openaq = data.airQuality?.openaq;
   const category = aqiCategory(waqi?.aqi);
   const rows = openaq ? Object.entries(openaq.pollutants) : [];
+  const distance = waqi?.station?.distanceKm;
+  const isFar = typeof distance === "number" && distance > FAR_KM;
 
   return (
     <section className="card">
@@ -45,11 +48,22 @@ function AqiCard({ data, loading, error, hasLocation }) {
           </div>
           <p>
             <strong>{category.label}</strong>
-            {waqi.dominantPollutant && <> · main pollutant {NAMES[waqi.dominantPollutant] || waqi.dominantPollutant}</>}
+            {waqi.dominantPollutant && (
+              <> · main pollutant {NAMES[waqi.dominantPollutant] || waqi.dominantPollutant}</>
+            )}
           </p>
           <p className="small">
-            {waqi.station?.name}, {formatTime(waqi.timestamp)}
+            Station: {waqi.station?.name}
+            {typeof distance === "number" && <> ({distance} km from you)</>}
+            <br />
+            Measured {formatTime(waqi.timestamp)}
           </p>
+          {isFar && (
+            <p className="warning">
+              The nearest station is {distance} km away, so this reading may not reflect
+              the air where you are.
+            </p>
+          )}
         </>
       ) : (
         <p>Overall AQI is unavailable right now.</p>
@@ -81,7 +95,10 @@ function AqiCard({ data, loading, error, hasLocation }) {
           </tbody>
         </table>
       ) : (
-        <p className="small">Detailed pollutant readings are unavailable.</p>
+        <p className="small">
+          No detailed pollutant readings: there is no OpenAQ monitoring station within 25 km
+          of this location.
+        </p>
       )}
     </section>
   );

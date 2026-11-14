@@ -127,3 +127,70 @@ body {
   padding: 4px 6px;
   border-bottom: 1px solid #e4e7eb;
 }
+.warning {
+  background: #fff4e5;
+  border-left: 4px solid #ea580c;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+
+.subhead {
+  margin: 14px 0 6px;
+  font-size: 0.9rem;
+}
+
+.manual {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.manual input {
+  flex: 1;
+  min-width: 100px;
+  padding: 6px 8px;
+  border: 1px solid #cbd2d9;
+  border-radius: 6px;
+}
+
+.manual button {
+  margin-top: 0;
+}
+
+.results {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.results li {
+  border-bottom: 1px solid #e4e7eb;
+}
+
+.card button.link {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 8px 4px;
+  background: none;
+  color: #0b5d7a;
+  text-align: left;
+}
+
+.card button.link:hover {
+  background: #e6f2f7;
+}
+.wide {
+  grid-column: 1 / -1;
+}
+
+.map {
+  height: 380px;
+  width: 100%;
+  border-radius: 6px;
+}
+
+.user-marker {
+  filter: hue-rotate(150deg) brightness(0.8);
+}

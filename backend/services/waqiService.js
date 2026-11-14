@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { distanceKm } = require("../utils/geo");
 
 const POLLUTANTS = ["pm25", "pm10", "no2", "o3", "co", "so2"];
 
@@ -24,6 +25,10 @@ async function getWaqiAirQuality(lat, lon) {
     }
   }
 
+  const stationLat = d.city?.geo?.[0];
+  const stationLon = d.city?.geo?.[1];
+  const hasPosition = typeof stationLat === "number" && typeof stationLon === "number";
+
   return {
     source: "waqi",
     aqi: typeof d.aqi === "number" ? d.aqi : null,
@@ -32,8 +37,11 @@ async function getWaqiAirQuality(lat, lon) {
     pollutants,
     station: {
       name: d.city?.name || null,
-      latitude: d.city?.geo?.[0] ?? null,
-      longitude: d.city?.geo?.[1] ?? null,
+      latitude: hasPosition ? stationLat : null,
+      longitude: hasPosition ? stationLon : null,
+      distanceKm: hasPosition
+        ? Math.round(distanceKm(lat, lon, stationLat, stationLon) * 10) / 10
+        : null,
     },
     timestamp: d.time?.iso || null,
   };
