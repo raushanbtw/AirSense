@@ -15,6 +15,8 @@ app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/location", require("./routes/locationRoutes"));
 app.use("/api/air-quality", require("./routes/airQualityRoutes"));
 app.use("/api/weather", require("./routes/weatherRoutes"));
+app.use("/api/traffic", require("./routes/trafficRoutes"));
+app.use("/api/environment", require("./routes/environmentRoutes"));
 
 connectMongo();
 
