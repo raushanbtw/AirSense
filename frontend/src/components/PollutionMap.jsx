@@ -90,11 +90,21 @@ function Recenter({ latitude, longitude }) {
   return null;
 }
 
+// Keeps the map correct when its box changes size (sidebar hide/show, page switch)
+function ResizeWatcher() {
+  const map = useMap();
+  useEffect(() => {
+    const observer = new ResizeObserver(() => map.invalidateSize());
+    observer.observe(map.getContainer());
+    return () => observer.disconnect();
+  }, [map]);
+  return null;
+}
+
 function PollutionMap({ coords, data }) {
   if (!coords) {
     return (
-      <section className="card wide">
-        <h2>Pollution Map</h2>
+      <section className="card map-card tint-white">
         <p>Share your location to see the map.</p>
       </section>
     );
@@ -103,8 +113,7 @@ function PollutionMap({ coords, data }) {
   const stations = collectStations(data);
 
   return (
-    <section className="card wide">
-      <h2>Pollution Map</h2>
+    <section className="card map-card tint-white">
       <MapContainer
         center={[coords.latitude, coords.longitude]}
         zoom={11}
@@ -116,6 +125,7 @@ function PollutionMap({ coords, data }) {
           attribution="&copy; OpenStreetMap contributors"
         />
         <Recenter latitude={coords.latitude} longitude={coords.longitude} />
+                <ResizeWatcher />
 
         <Marker position={[coords.latitude, coords.longitude]} icon={userIcon}>
           <Popup>{coords.label || "Selected location"}</Popup>

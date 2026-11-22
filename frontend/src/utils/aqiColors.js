@@ -8,6 +8,14 @@ export function aqiCategory(aqi) {
   return { label: "Hazardous", color: "#7f1d1d" };
 }
 
+// Three moods for the banner image: good, moderate ("average") and poor ("bad")
+export function aqiMood(aqi) {
+  if (typeof aqi !== "number") return "none";
+  if (aqi <= 50) return "good";
+  if (aqi <= 100) return "moderate";
+  return "poor";
+}
+
 export function formatTime(iso) {
   if (!iso) return "unknown time";
   const date = new Date(iso);

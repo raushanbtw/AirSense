@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Mail } from "lucide-react";
 
 function SignInForm({ onSignIn, loading }) {
   const [email, setEmail] = useState("");
@@ -18,26 +19,28 @@ function SignInForm({ onSignIn, loading }) {
   };
 
   return (
-    <div className="signin">
-      <h3 className="subhead">Already registered?</h3>
-      <form onSubmit={submit}>
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
-        {problem && <p className="error">{problem}</p>}
-        <button type="submit" disabled={loading}>
-          Sign in
-        </button>
-      </form>
-      <p className="small">
-        This development version finds your profile by email only, without a password.
+    <form className="card tint-teal pf-signin" onSubmit={submit}>
+      <label className="pf-field">
+        Email you registered with
+        <input
+          type="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </label>
+
+      {problem && <p className="error">{problem}</p>}
+
+      <button type="submit" disabled={loading}>
+        <Mail size={16} />
+        Sign in
+      </button>
+
+      <p className="tiny">
+        Development version: your profile is found by email only, without a password.
       </p>
-    </div>
+    </form>
   );
 }
 

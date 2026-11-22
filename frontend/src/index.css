@@ -1,3 +1,40 @@
+/* ==========================================================================
+   AIRSENSE DASHBOARD STYLES
+   ==========================================================================
+
+   CONTENTS
+    1. Reset and base
+    2. Page layout
+    3. Sidebar
+    4. Top bar
+    5. Light / dark theme switch
+    6. Cards, colour tints and text helpers
+    7. Hero banner and search bar
+    8. Dashboard categories (pollutants, stats, rows, forecast, traffic, map)
+    9. Profile page
+   10. Light mode theme
+   11. Dark mode theme
+   12. Neon search bar animation
+   13. Small screens
+   14. Reduced motion
+
+   WHERE TO CHANGE COMMON THINGS
+    - Card colours ........ section 6 (base), 10 (light), 11 (dark)
+    - Shadow edges ........ section 10 (light), 11 (dark)
+    - Glass effect ........ section 10 (light mode only)
+    - Neon speed / colours  section 12
+    - Sizes of pollutant numbers ... section 8
+    - Gap between categories ....... section 2 (.dash)
+
+   RULE OF THUMB: a rule that only applies in one theme goes in section 10 or
+   11. Everything else goes in the section for that part of the page.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. RESET AND BASE
+   ========================================================================== */
+
 * {
   box-sizing: border-box;
 }
@@ -5,210 +42,785 @@
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: #f3f5f8;
+  background: #bbd1fd; /* the light theme draws its own background in section 10 */
   color: #1f2933;
 }
 
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px;
+  background: #00002de8;
+  color: #ffffff;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+button.secondary {
+  background: #52606d;
+  margin-left: 8px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+  font: inherit;
+}
+
+
+/* ==========================================================================
+   2. PAGE LAYOUT
+   ========================================================================== */
+
 .app {
+  display: flex;
   min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
 
-.header {
+.content {
+  padding: 0 20px 24px;
+}
+
+/* The dashboard: a centred column with a big gap between categories */
+.dash {
+  display: grid;
+  gap: 34px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
+
+/* One category = a heading plus its cards */
+.category {
+  display: grid;
+  gap: 12px;
+}
+
+.category-title {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
-  background: #0b5d7a;
-  color: white;
+  gap: 10px;
+  margin: 0 2px;
+  font-size: 1.1rem;
+  color: #17324d;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 1.4rem;
+.category-title svg {
+  color: #2f7fe0;
 }
 
-.status {
-  font-size: 0.85rem;
-}
-
-.body {
-  display: flex;
+/* thin line after the heading */
+.category-title::after {
+  content: "";
   flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.15;
 }
+
+
+/* ==========================================================================
+   3. SIDEBAR
+   ========================================================================== */
 
 .sidebar {
-  width: 180px;
-  background: white;
-  border-right: 1px solid #dde3ea;
-  padding: 16px 0;
+  width: 230px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 16px 10px;
+  color: #ffffff;
+  background: linear-gradient(180deg, #f8f8f8 0%, #abdbff 60%, #d7e6ff 100%);
+  transition: width 0.25s ease;
+}
+
+/* With your own picture: a blue layer on top keeps the text readable.
+   The picture itself is set from Sidebar.jsx through --sidebar-image. */
+.sidebar.has-image {
+  /* background-image: linear-gradient(rgba(125, 113, 113, 0.613), rgba(93, 137, 155, 0.172)),
+    var(--sidebar-image); */
+  background-size: cover;
+  background-position: center;
 }
 
 .sidebar ul {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: grid;
+  gap: 4px;
 }
 
-.sidebar li {
-  padding: 10px 24px;
-  cursor: pointer;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 18px;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
-.sidebar li.active {
-  background: #e6f2f7;
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: transparent;
+  color: #000000;
+  text-align: left;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sidebar li.active .nav-btn {
+  background: #2f7fe0;
+  color: #fff;
   font-weight: 600;
 }
 
-.dashboard {
-  flex: 1;
-  padding: 24px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-  align-content: start;
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
+/* Hidden state: icons only */
+.sidebar.collapsed {
+  width: 68px;
+}
+
+.sidebar.collapsed .nav-label {
+  display: none;
+}
+
+.sidebar.collapsed .nav-btn {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.sidebar.collapsed .brand {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+
+/* ==========================================================================
+   4. TOP BAR
+   ========================================================================== */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 20px;
+}
+
+.topbar h1 {
+  font-size: 1.4rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #52606d;
+}
+
+.topbar-right {
+  display: flex;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #cdd4de;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+
+/* ==========================================================================
+   5. LIGHT / DARK THEME SWITCH
+   A sliding knob (::before) moves under the sun and moon icons.
+   ========================================================================== */
+
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  background: #fff;
+  border: 1px solid #cdd4de;
+  border-radius: 999px;
+  padding: 3px;
+}
+
+/* The knob */
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 34px;
+  height: 28px;
+  border-radius: 999px;
+  background: #0b5d7a;
+  z-index: 0;
+  transition: transform 0.4s cubic-bezier(0.4, 1.5, 0.5, 1), background 0.3s;
+}
+
+:root[data-theme="dark"] .theme-toggle::before {
+  transform: translateX(34px);
+  background: #2f7fe0;
+}
+
+.theme-toggle button {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 28px;
+  padding: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #52606d;
+}
+
+/* The knob is the highlight, so the active button stays transparent */
+.theme-toggle button.on {
+  background: transparent;
+  color: #fff;
+}
+
+/* Icons spin and fade when they become active or inactive */
+.theme-toggle button svg {
+  transition: transform 0.8s ease, opacity 0.3s, color 0.3s;
+}
+
+.theme-toggle button:not(.on) svg {
+  opacity: 0.6;
+  transform: rotate(-40deg) scale(0.85);
+}
+
+.theme-toggle button.on svg {
+  opacity: 1;
+  transform: rotate(60deg) scale(1.1);
+}
+
+.theme-toggle button:first-child.on svg {
+  color: #ffc94a; /* sun */
+}
+
+.theme-toggle button:last-child.on svg {
+  color: #181818; /* moon */
+}
+
+
+/* ==========================================================================
+   6. CARDS, COLOUR TINTS AND TEXT HELPERS
+   ========================================================================== */
+
+/* Base card. The shadow here is a fallback: sections 10 and 11 set the
+   real edge for each theme. */
 .card {
-  background: white;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border: 1px solid #dde3ea;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 6px rgba(15, 40, 80, 0.1);
 }
 
 .card h2 {
-  margin: 0 0 8px;
-  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+/* Colour tints: each box gets its own colour so it stands out from the page */
+.tint-white  { background: #ffffff; border-color: #cdd7e4; }
+.tint-blue   { background: #dcecff; border-color: #a9cbf5; }
+.tint-green  { background: #dbf4e5; border-color: #a6dcbd; }
+.tint-purple { background: #e9e0fb; border-color: #c6b5ee; }
+.tint-pink   { background: #fde0e6; border-color: #f2b3c0; }
+.tint-yellow { background: #fff0c9; border-color: #efd07c; }
+.tint-red    { background: #fddcd8; border-color: #f0a79e; }
+.tint-teal   { background: #d8f2f2; border-color: #9fd6d6; }
+.tint-grey   { background: #e6eaf0; border-color: #c5cdd9; }
+
+/* Small boxes that sit inside cards */
+.pollutant-value,
+.fc-box,
+.icon-bubble {
+  background: rgba(241, 255, 248, 0);
+}
+
+/* Text helpers */
+.small {
+  font-size: 0.8rem;
+  color: #3e4c59;
+  margin-bottom: 8%;
+}
+
+.tiny {
+  font-size: 0.72rem;
+  color: #52606d;
+}
+
+.block {
+  display: block;
 }
 
 .error {
   color: #b42318;
 }
 
-.card button {
-  margin-top: 12px;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  background: #0b5d7a;
-  color: white;
-  cursor: pointer;
+.success {
+  color: #137333;
 }
 
-.card button:disabled {
-  opacity: 0.6;
-  cursor: default;
+.advice-line {
+  margin: 6px 0;
+  font-size: 0.88rem;
 }
 
-.aqi-badge {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 6px;
-  color: white;
-  font-size: 1.4rem;
-  font-weight: 700;
+
+/* ==========================================================================
+   7. HERO BANNER AND SEARCH BAR
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  min-height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(10, 40, 90, 0.25); /* fallback, see sections 10/11 */
 }
 
-.small {
-  font-size: 0.8rem;
-  color: #52606d;
-}
-
-.table {
+/* Photo (or drawn skyline) fills the whole banner */
+.scene {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
+  height: 100%;
 }
 
-.table th,
-.table td {
-  text-align: left;
-  padding: 4px 6px;
-  border-bottom: 1px solid #e4e7eb;
-}
-.warning {
-  background: #fff4e5;
-  border-left: 4px solid #ea580c;
-  padding: 8px 10px;
-  font-size: 0.85rem;
-  border-radius: 4px;
+.scene-img {
+  object-fit: cover;
+  object-position: center;
+  transition: filter 0.8s;
 }
 
-.subhead {
-  margin: 14px 0 6px;
+/* White fog over the photo. Its strength is set from HeroImage.jsx
+   according to the AQI. */
+.fog {
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.6) 55%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  transition: opacity 0.6s;
+}
+
+/* Dark layer on the left so the white text stays readable */
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 28, 66, 0.777) 0%,
+    rgba(8, 28, 66, 0.8) 32%,
+    rgba(8, 28, 66, 0.25) 75%,
+    rgba(8, 28, 66, 0) 100%
+  );
+}
+
+.hero-body {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  padding: 18px 22px;
+}
+
+/* Left: the big AQI number */
+.hero-aqi {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 150px;
+}
+
+.hero-label {
+  font-size: 0.95rem;
+}
+
+.hero-number {
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.hero-pill {
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-weight: 700;
   font-size: 0.9rem;
 }
 
-.manual {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.manual input {
-  flex: 1;
-  min-width: 100px;
-  padding: 6px 8px;
-  border: 1px solid #cbd2d9;
+.hero-preview {
+  margin-top: 6px;
+  padding: 2px 8px;
   border-radius: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 0.72rem;
 }
 
-.manual button {
-  margin-top: 0;
+/* Right: place name, details and search */
+.hero-main {
+  flex: 1;
+  min-width: 280px;
 }
 
+.hero-place {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.2rem;
+}
+
+.hero-sub {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  opacity: 0.95;
+}
+
+.hero-error {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(180, 35, 24, 0.9);
+  font-size: 0.85rem;
+}
+
+/* Search bar (the animated neon edge is in section 12) */
+.searchbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 700px;
+  margin-top: 12px;
+  padding: 6px 8px 6px 14px;
+  border-radius: 999px;
+  background: #fff;
+  color: #1f2933;
+}
+
+.searchbar input {
+  flex: 1;
+  min-width: 160px;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.searchbar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #0b2d63;
+}
+
+.searchbar button.ghost {
+  background: #fff;
+  color: #0b3a66;
+  border: 1px solid #cbd2d9;
+}
+
+/* Place search results */
 .results {
   list-style: none;
   margin: 8px 0 0;
   padding: 0;
 }
 
-.results li {
-  border-bottom: 1px solid #e4e7eb;
+.hero-results {
+  max-width: 700px;
+  padding: 4px;
+  border-radius: 10px;
+  background: #fff;
+  color: #1f2933;
 }
 
-.card button.link {
+.hero-results li + li {
+  border-top: 1px solid #e4e7eb;
+}
+
+button.link {
   display: block;
   width: 100%;
-  margin: 0;
-  padding: 8px 4px;
+  padding: 8px 10px;
   background: none;
   color: #0b5d7a;
   text-align: left;
 }
 
-.card button.link:hover {
+button.link:hover {
   background: #e6f2f7;
 }
-.wide {
-  grid-column: 1 / -1;
+
+/* "Enter coordinates instead" */
+.hero-details summary {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
-.map {
-  height: 380px;
-  width: 100%;
+.hero-details .coords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.hero-details input {
+  width: 130px;
+  padding: 6px 9px;
+  border: none;
   border-radius: 6px;
 }
 
+
+/* ==========================================================================
+   8. DASHBOARD CATEGORIES
+   ========================================================================== */
+
+/* ----- 8.1 Air Pollutants ----- */
+
+.pollutant-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  align-items: stretch; /* all five cards share one height */
+}
+
+/* Card content is a column, so the value box can sit at the bottom */
+.pollutant {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+}
+
+.pollutant-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pollutant-name {
+  font-size: 1.3rem;
+}
+
+.pollutant-desc {
+  margin-top: 6px;
+  min-height: 2.6em;
+  font-size: 0.69rem;
+  line-height: 1.35;
+}
+
+/* The value box is pinned to the bottom, so all numbers line up */
+.pollutant-value {
+  margin-top: auto;
+  padding: 10px 6px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.pollutant-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pollutant-value small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+/* Source line under the value: two lines at most, so every card ends equally */
+.pollutant > .tiny {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 6px;
+  min-height: 2.6em;
+}
+
+/* ----- 8.2 Stats ----- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.icon-bubble {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.stat-title {
+  display: block;
+  font-size: 0.8rem;
+  color: #3e4c59;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+}
+
+/* ----- 8.3 Rows of side-by-side cards (Health & Traffic, Forecast) ----- */
+
+.cat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.cat-row > .card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ----- 8.4 Traffic speed bar ----- */
+
+.bar {
+  height: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  background: #d9dee5;
+  overflow: hidden;
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+}
+
+/* ----- 8.5 24-hour forecast boxes ----- */
+
+.fc-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fc-box {
+  padding: 10px 4px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.fc-box span {
+  display: block;
+  font-size: 0.8rem;
+}
+
+.fc-box strong {
+  display: block;
+  font-size: 1.3rem;
+}
+
+.fc-box.muted {
+  color: #7b8794;
+}
+
+.fc-bar {
+  height: 6px;
+  margin: 6px 8px 0;
+  border-radius: 3px;
+}
+
+/* ----- 8.6 Pollution map ----- */
+
+.map {
+  width: 100%;
+  height: 260px;
+  border-radius: 8px;
+}
+
+.map-card .map {
+  height: 320px;
+}
+
+/* the darker pin for "your location" */
 .user-marker {
   filter: hue-rotate(150deg) brightness(0.8);
 }
 
-.content {
-  flex: 1;
-  min-width: 0;
-}
 
-.nav-btn {
-  all: unset;
-  display: block;
-  width: 100%;
-  cursor: pointer;
-}
+/* ==========================================================================
+   9. PROFILE PAGE
+   ========================================================================== */
 
 .profile {
-  padding: 24px;
+  padding: 8px 0 20px;
 }
 
 .profile-card {
@@ -238,30 +850,929 @@ body {
   border-radius: 6px;
 }
 
+/* !important is needed to beat ".profile-card form label" above */
 .check {
   display: flex !important;
   align-items: center;
   gap: 8px;
 }
 
-.success {
-  color: #137333;
+.subhead {
+  margin: 14px 0 6px;
+  font-size: 0.95rem;
 }
 
-.note {
-  background: #e6f2f7;
-  border-left: 4px solid #0b5d7a;
-  padding: 8px 10px;
+
+/* ==========================================================================
+   10. LIGHT MODE THEME
+   Glass cards, a soft coloured background and 1 px edge shadows.
+   (Everything here applies unless data-theme="dark" is set.)
+   ========================================================================== */
+
+/* Page background: soft colour glows, so the glass has something to blur */
+:root:not([data-theme="dark"]) body {
+  background:
+    radial-gradient(900px 520px at 8% -8%, #cfe3ff 0%, transparent 60%),
+    radial-gradient(800px 480px at 96% 6%, #f0d9ff 0%, transparent 55%),
+    radial-gradient(900px 600px at 60% 105%, #d3f3e6 0%, transparent 60%),
+    #bbd1fd;
+  background-attachment: fixed;
+}
+
+/* Glass card, with a dark edge at the bottom-right and a teal edge at the top-left */
+:root:not([data-theme="dark"]) .card {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  box-shadow:
+    1px 1px 1px rgba(70, 90, 130, 0.55),
+    -1px -2px 2px rgba(62, 131, 148, 0.682),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Each colour keeps its tint, now see-through */
+:root:not([data-theme="dark"]) .tint-white  { background: rgba(255, 255, 255, 0.6); }
+:root:not([data-theme="dark"]) .tint-blue   { background: rgba(190, 214, 255, 0.62); }
+:root:not([data-theme="dark"]) .tint-green  { background: rgba(185, 238, 208, 0.62); }
+:root:not([data-theme="dark"]) .tint-purple { background: rgba(215, 200, 250, 0.62); }
+:root:not([data-theme="dark"]) .tint-pink   { background: rgba(252, 200, 212, 0.62); }
+:root:not([data-theme="dark"]) .tint-yellow { background: rgba(255, 232, 160, 0.62); }
+:root:not([data-theme="dark"]) .tint-red    { background: rgba(252, 190, 182, 0.62); }
+:root:not([data-theme="dark"]) .tint-teal   { background: rgba(176, 230, 230, 0.62); }
+:root:not([data-theme="dark"]) .tint-grey   { background: rgba(212, 220, 232, 0.62); }
+
+/* Banner: a white edge and the same 1 px shadow */
+:root:not([data-theme="dark"]) .hero {
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    1px 1px 1px rgba(70, 90, 130, 0.55),
+    -1px -1px 1px rgba(255, 255, 255, 0.95);
+}
+
+/* Top bar chips and the theme switch: small glass pills */
+:root:not([data-theme="dark"]) .chip,
+:root:not([data-theme="dark"]) .theme-toggle {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    1px 1px 1px rgba(70, 90, 130, 0.55),
+    -1px -1px 1px rgba(255, 255, 255, 0.95);
+}
+
+/* Small boxes inside cards */
+:root:not([data-theme="dark"]) .pollutant-value,
+:root:not([data-theme="dark"]) .icon-bubble,
+:root:not([data-theme="dark"]) .fc-box {
+  box-shadow:
+    1px 1px 1px rgba(112, 138, 190, 0.55),
+    -1px -1px 1px rgba(255, 255, 255, 0.95);
+}
+
+
+/* ==========================================================================
+   11. DARK MODE THEME
+   Solid cards (no glass), 1 px edge shadows, a darker sidebar.
+   (Applies when <html data-theme="dark">.)
+   ========================================================================== */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ----- 11.1 Page and text ----- */
+
+[data-theme="dark"] body {
+  background: #0f1724;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .subtitle,
+[data-theme="dark"] .small,
+[data-theme="dark"] .stat-title {
+  color: #b8c4d4;
+}
+
+[data-theme="dark"] .tiny {
+  color: #9aa8bb;
+}
+
+[data-theme="dark"] .error {
+  color: #ff7063;
+}
+
+[data-theme="dark"] .success {
+  color: #69e199;
+}
+
+[data-theme="dark"] .category-title {
+  color: #e6edf5;
+}
+
+[data-theme="dark"] .category-title svg {
+  color: #6aa9ff;
+}
+
+/* ----- 11.2 Top bar chips and the theme switch ----- */
+
+[data-theme="dark"] .chip,
+[data-theme="dark"] .theme-toggle {
+  background: #1a2436;
+  border-color: #2b3a52;
+  color: #e6edf5;
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.8),
+    -1px -1px 1px rgba(140, 170, 220, 0.28);
+}
+
+[data-theme="dark"] .theme-toggle button {
+  color: #9aa8bb;
+}
+
+[data-theme="dark"] .theme-toggle button.on {
+  background: transparent;
+  color: #fff;
+}
+
+/* ----- 11.3 Cards (the card rule must come before the tints) ----- */
+
+[data-theme="dark"] .card {
+  background: #1a2436;
+  border-color: #2b3a52;
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.8),
+    -1px -1px 1px rgba(140, 170, 220, 0.28);
+}
+
+[data-theme="dark"] .tint-white  { background: #1a2436d7; border-color: #2f3f58; }
+[data-theme="dark"] .tint-blue   { background: #16304fc0; border-color: #25507f; }
+[data-theme="dark"] .tint-green  { background: #123a2aca; border-color: #23634a; }
+[data-theme="dark"] .tint-purple { background: #2a2250d9; border-color: #4a3d86; }
+[data-theme="dark"] .tint-pink   { background: #4a1f2cd1; border-color: #7d3a4e; }
+[data-theme="dark"] .tint-yellow { background: #4a3b12e3; border-color: #7d6420; }
+[data-theme="dark"] .tint-red    { background: #4d2220e3; border-color: #833c37; }
+[data-theme="dark"] .tint-teal   { background: #123b3ddf; border-color: #25686b; }
+[data-theme="dark"] .tint-grey   { background: #222c3c; border-color: #3a475c; }
+
+/* ----- 11.4 Small boxes inside cards ----- */
+
+[data-theme="dark"] .pollutant-value,
+[data-theme="dark"] .icon-bubble,
+[data-theme="dark"] .fc-box {
+  background: rgba(255, 255, 255, 0.047);
+  box-shadow:
+    1px 1px 1px rgba(18, 9, 9, 0.8),
+    -1px -1px 1px rgba(140, 170, 220, 0.28);
+}
+
+[data-theme="dark"] .fc-box.muted {
+  color: #8190a5;
+}
+
+[data-theme="dark"] .bar {
+  background: #2b3a52;
+}
+
+/* ----- 11.5 Banner and search ----- */
+
+[data-theme="dark"] .hero {
+  border: 1px solid #2b3a52;
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.8),
+    -1px -1px 1px rgba(140, 170, 220, 0.28);
+}
+
+[data-theme="dark"] .hero-shade {
+  background: linear-gradient(
+    90deg,
+    rgba(4, 12, 30, 0.95) 0%,
+    rgba(4, 12, 30, 0.85) 32%,
+    rgba(4, 12, 30, 0.45) 75%,
+    rgba(4, 12, 30, 0.2) 100%
+  );
+}
+
+/* (the search bar background is the neon block in section 12) */
+[data-theme="dark"] .searchbar {
+  color: #e6edf5;
+}
+
+[data-theme="dark"] .searchbar input {
+  color: #e6edf5;
+}
+
+[data-theme="dark"] .searchbar button.ghost {
+  background: #1a2436;
+  color: #cfe0f5;
+  border-color: #3a475c;
+}
+
+[data-theme="dark"] .hero-results {
+  background: #1a2436;
+  color: #e6edf5;
+}
+
+[data-theme="dark"] .hero-results li + li {
+  border-top-color: #2b3a52;
+}
+
+[data-theme="dark"] button.link {
+  color: #8ec5ff;
+}
+
+[data-theme="dark"] button.link:hover {
+  background: #223149;
+}
+
+/* ----- 11.6 Profile form ----- */
+
+[data-theme="dark"] .profile-card form input[type="text"],
+[data-theme="dark"] .profile-card form input[type="email"],
+[data-theme="dark"] .profile-card form input[type="number"] {
+  background: #0f1724;
+  color: #e6edf5;
+  border-color: #3a475c;
+}
+
+[data-theme="dark"] .profile-card fieldset {
+  border-color: #2b3a52;
+}
+
+/* ----- 11.7 Map: darken the tiles, popups and zoom buttons ----- */
+
+[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
+[data-theme="dark"] .leaflet-popup-content-wrapper,
+[data-theme="dark"] .leaflet-popup-tip {
+  background: #1a2436;
+  color: #e6edf5;
+}
+
+[data-theme="dark"] .leaflet-bar a {
+  background: #1a2436;
+  color: #e6edf5;
+  border-color: #3a475c;
+}
+
+/* ----- 11.8 Sidebar: much darker (the has-image rule must come second) ----- */
+
+[data-theme="dark"] .sidebar {
+  background-image: linear-gradient(180deg, #050b18 0%, #07142b 60%, #040a16 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 6px 0 26px rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="dark"] .sidebar.has-image {
+  background-image: linear-gradient(rgba(2, 6, 16, 0.86), rgba(2, 6, 16, 0.97)),
+    var(--sidebar-image);
+  background-size: cover;
+  background-position: center;
+}
+
+
+/* ==========================================================================
+   12. NEON SEARCH BAR ANIMATION
+   A coloured light runs around the search bar's edge. The edge is a
+   conic-gradient border whose start angle (--neon-angle) keeps turning.
+   ========================================================================== */
+
+@property --neon-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes neon-spin {
+  to {
+    --neon-angle: 360deg;
+  }
+}
+
+/* Light mode: 3 px edge, cyan, teal and coral, slower (3.5 s per turn) */
+:root:not([data-theme="dark"]) .searchbar {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(#ffffff, #c4d6eb) padding-box,
+    conic-gradient(
+        from var(--neon-angle),
+        transparent 0%,
+        transparent 55%,
+        #00a8c5 72%,
+        #ffea03 86%,
+        #ff990a 94%,
+        transparent 100%
+      )
+      border-box;
+  animation: neon-spin 3.5s linear infinite;
+  box-shadow:
+    0 0 10px rgba(0, 213, 255, 0.55),
+    0 0 26px rgba(122, 92, 255, 0.35);
+}
+
+/* Dark mode: 2 px edge, cyan, pink and blue, */
+[data-theme="dark"] .searchbar {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(#252d3a, #0f1828) padding-box,
+    conic-gradient(
+        from var(--neon-angle),
+        transparent 0%,
+        transparent 55%,
+        #00d5ff 72%,
+        #008094 86%,
+        #bdaf91 94%,
+        transparent 100%
+      )
+      border-box;
+  animation: neon-spin 3.5s linear infinite;
+  box-shadow:
+    0 0 10px rgba(0, 240, 255, 0.45),
+    0 0 26px rgba(122, 92, 255, 0.3);
+}
+
+
+/* ==========================================================================
+   13. SMALL SCREENS
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+  .pollutant-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .sidebar {
+    width: 64px;
+  }
+
+  .nav-label {
+    display: none;
+  }
+
+  .fc-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+/* ==========================================================================
+   14. REDUCED MOTION
+   People who ask their system for less motion get no running neon light
+   and no animated theme switch.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .searchbar {
+    animation: none;
+  }
+
+  .theme-toggle::before,
+  .theme-toggle button svg {
+    transition: none;
+  }
+}
+
+/* ================= Sidebar redesign: logo, dividers and light/dark colours ================= */
+
+/* ---- Colours: change them here ---- */
+
+/* Light theme (default) */
+.sidebar {
+  --sb-bg: linear-gradient(180deg, #f7faff 0%, #e8f0fc 100%);
+  --sb-text: #25405f;
+  --sb-line: rgba(37, 64, 95, 0.14);       /* lines between the items */
+  --sb-border: rgba(37, 64, 95, 0.22);     /* line between sidebar and page */
+  --sb-hover: rgba(37, 99, 235, 0.1);
+  --sb-active-bg: #2563eb;
+  --sb-active-text: #ffffff;
+  --sb-shadow: none;
+}
+
+/* Dark theme */
+:root[data-theme="dark"] .sidebar {
+  --sb-bg: linear-gradient(180deg, #060b16 0%, #0a1426 100%);
+  --sb-text: #cfdcee;
+  --sb-line: rgba(255, 255, 255, 0.09);
+  --sb-border: rgba(255, 255, 255, 0.16);
+  --sb-hover: rgba(255, 255, 255, 0.08);
+  --sb-active-bg: #2563eb;
+  --sb-active-text: #ffffff;
+  --sb-shadow: 6px 0 26px rgba(0, 0, 0, 0.55);
+}
+
+/* ---- Sidebar body, with the dividing line on its right edge ---- */
+
+:root .sidebar {
+  background: var(--sb-bg);
+  color: var(--sb-text);
+  border-right: 1px solid var(--sb-border);
+  box-shadow: var(--sb-shadow);
+}
+
+/* ---- Logo row: logo on the left, hide/show button on the right ---- */
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 4px 14px;
+  border-bottom: 1px solid var(--sb-line);   /* line below the logo */
+}
+
+.brand-logo {
+  height: 38px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+}
+
+.brand-fallback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--sb-text);
+}
+
+/* Hide/show button: symbol only */
+.collapse-btn {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--sb-line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sb-text);
+}
+
+.collapse-btn:hover {
+  background: var(--sb-hover);
+}
+
+/* ---- Menu: a line under every item ---- */
+
+.sidebar ul {
+  gap: 0;
+}
+
+.sidebar li {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--sb-line);
+}
+
+:root .sidebar .nav-btn {
+  color: var(--sb-text);
+}
+
+:root .sidebar .nav-btn:hover:not(:disabled) {
+  background: var(--sb-hover);
+}
+
+:root .sidebar li.active .nav-btn {
+  background: var(--sb-active-bg);
+  color: var(--sb-active-text);
+  font-weight: 600;
+}
+
+/* ---- Hidden sidebar (icons only): logo above the button ---- */
+
+.sidebar.collapsed .brand-row {
+  flex-direction: column;
+  gap: 10px;
+  padding: 2px 0 12px;
+}
+
+.sidebar.collapsed .brand-logo {
+  height: auto;
+  max-width: 40px;
+}
+
+@media (max-width: 820px) {
+  .brand-row {
+    flex-direction: column;
+    gap: 10px;
+    padding: 2px 0 12px;
+  }
+
+  .brand-logo {
+    height: auto;
+    max-width: 40px;
+  }
+}
+
+/* ================= AQI number colour: green, yellow, red ================= */
+
+.hero-number {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+.hero.mood-good .hero-number {
+  color: #4ade80;    /* AQI 0 to 50 */
+}
+
+.hero.mood-moderate .hero-number {
+  color: #facc15;    /* AQI 51 to 100 */
+}
+
+.hero.mood-poor .hero-number {
+  color: #ff5a5a;    /* AQI above 100 */
+}
+
+/* ================= Sidebar v3: gradient, bigger logo, mobile bottom bar ================= */
+
+/* ---- Gradient colours (the sidebar and the mobile bottom bar share them) ---- */
+
+/* Light theme */
+.sidebar,
+.bottom-nav {
+  --sb-bg: linear-gradient(180deg, #9cbafd 0%, #aacbd4 55%);
+  --sb-text: #1e3a5f;
+  --sb-line: rgba(30, 58, 95, 0.16);
+  --sb-border: rgba(30, 58, 95, 0.25);
+  --sb-hover: rgba(37, 99, 235, 0.12);
+  --sb-active-bg: #24355b;
+  --sb-active-text: #ffffff;
+}
+
+/* Dark theme */
+:root[data-theme="dark"] .sidebar,
+:root[data-theme="dark"] .bottom-nav {
+  --sb-bg: linear-gradient(180deg, #1a2436 0%, #1a2436, #02243b);
+  --sb-text: #d6e2f5;
+  --sb-line: rgba(255, 255, 255, 0.12);
+  --sb-border: rgba(255, 255, 255, 0.18);
+  --sb-hover: rgba(255, 255, 255, 0.1);
+  --sb-active-bg:  #41537a;
+  --sb-active-text: #ffffff;
+}
+
+/* ---- Bigger logo ---- */
+
+.brand-logo {
+  width: 155px;
+  height: 100px;
+  max-width: none;
+  object-fit: contain;
+}
+
+.sidebar.collapsed .brand-logo {
+  width: 44px;
+  height: 44px;
+  max-width: none;
+}
+
+/* the name next to the icon when no logo file exists */
+.logo-fallback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--sb-text);
+}
+
+.sidebar.collapsed .logo-fallback strong {
+  display: none;
+}
+
+/* ---- Top bar: only the logo on the left ---- */
+
+.topbar-logo {
+  max-width: 150px;
+  height: 44px;
+  object-fit: contain;
+}
+
+/* ---- Search: text box pill and two separate buttons ---- */
+
+.search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  max-width: 900px;
+  margin-top: 12px;
+}
+
+.search-row .searchbar {
+  flex: 1 1 260px;
+  max-width: none;
+  margin-top: 0;
+  padding: 9px 16px;
+  flex-wrap: nowrap;
+}
+
+.search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.search-btn.detect {
+  background: #ffffff;
+  color: #0b3a66;
+  border: 1px solid #cbd2d9;
+}
+
+.search-btn.go {
+  background: #0b2d63d8;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .search-btn.detect {
+  background: #1a2436d1;
+  color: #cfe0f5;
+  border-color: #3a475c;
+}
+
+[data-theme="dark"] .search-btn.go {
+  background: #1a2436ce;
+}
+
+/* ---- Mobile bottom bar (hidden on bigger screens) ---- */
+
+.bottom-nav {
+  display: none;
+}
+
+.bn-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--sb-text);
+  font-size: 0.72rem;
+}
+
+.bn-item.active {
+  background: var(--sb-active-bg);
+  color: var(--sb-active-text);
+  font-weight: 600;
+}
+
+.bn-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  /* no sidebar on a phone: the bottom bar replaces it */
+  .sidebar {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    gap: 6px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+    background: var(--sb-bg);
+    border-top: 1px solid var(--sb-border);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  /* leave room so the bar doesn't cover the end of the page */
+  .content {
+    padding-bottom: 88px;
+  }
+}
+
+/* Sidebar narrower than 820 px but still visible (769 to 820 px): small logo */
+@media (max-width: 820px) {
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ================= Profile page redesign (dashboard look) ================= */
+
+/* ---- Banner ---- */
+
+.profile-hero {
+  min-height: 170px;
+}
+
+.profile-hero .hero-body {
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+}
+
+.pf-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border: 3px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.pf-hello {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.pf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.pf-chip {
+  padding: 3px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 0.8rem;
+}
+
+/* ---- Form layout ---- */
+
+.pf-form {
+  display: grid;
+  gap: 34px;
+}
+
+.pf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0 14px;
+}
+
+.pf-field {
+  display: block;
+  margin: 8px 0;
   font-size: 0.85rem;
-  border-radius: 4px;
+  font-weight: 600;
 }
 
-.warning p,
-.note p {
-  margin: 4px 0;
+.pf-field input[type="text"],
+.pf-field input[type="email"],
+.pf-field input[type="number"] {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px 12px;
+  border: 1px solid rgba(30, 58, 95, 0.25);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #1f2933;
+  font-weight: 400;
 }
 
-button.secondary {
-  background: #52606d;
-  margin-left: 8px;
+.pf-field input:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+/* sign-in card */
+.pf-signin {
+  max-width: 460px;
+}
+
+.pf-signin button,
+.pf-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pf-signin .tiny {
+  margin-top: 10px;
+}
+
+/* ---- Selectable tiles (health flags and the alert switch) ---- */
+
+.tile-grid,
+.pf-alert {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 130px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* the checkbox stays in the page for keyboards, but is invisible */
+.tile input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tile:focus-within {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.tile-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.35;
+}
+
+.tile.on .tile-check {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  opacity: 1;
+}
+
+/* ---- Threshold control ---- */
+
+.pf-threshold-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.pf-threshold-row input[type="number"] {
+  width: 110px;
+  margin-top: 5px;
+}
+
+.pf-threshold-row input[type="range"] {
+  flex: 1;
+  min-width: 140px;
+  margin-top: 5px;
+  accent-color: #2563eb;
+}
+
+.pf-pill {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* ---- Messages and buttons ---- */
+
+.pf-msg {
+  padding: 10px 16px;
+}
+
+.pf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pf-actions button.secondary {
+  margin-left: 0;
+}
+
+/* ---- Dark mode ---- */
+
+[data-theme="dark"] .pf-field input[type="text"],
+[data-theme="dark"] .pf-field input[type="email"],
+[data-theme="dark"] .pf-field input[type="number"] {
+  background: rgba(10, 16, 30, 0.7);
+  color: #e6edf5;
+  border-color: rgba(255, 255, 255, 0.18);
 }

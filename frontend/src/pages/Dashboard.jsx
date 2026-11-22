@@ -1,69 +1,79 @@
+import { Wind, Activity, HeartPulse, CalendarDays, Map as MapIcon } from "lucide-react";
 import useLocation from "../hooks/useLocation";
 import useEnvironment from "../hooks/useEnvironment";
-import LocationCard from "../components/LocationCard";
-import AqiCard from "../components/AqiCard";
+import HeroBanner from "../components/HeroBanner";
+import Section from "../components/Section";
+import PollutantCards from "../components/PollutantCards";
+import StatsRow from "../components/StatsRow";
 import AdvisoryCard from "../components/AdvisoryCard";
-import WeatherCard from "../components/WeatherCard";
+import TrafficCard from "../components/TrafficCard";
 import PollutionMap from "../components/PollutionMap";
+import { TrendCard, ForecastCard } from "../components/PlaceholderCards";
+
+// Testing aid: add ?previewAqi=30 to the address to see the banner for that AQI
+function readPreview() {
+  const raw = new URLSearchParams(window.location.search).get("previewAqi");
+  if (raw === null || raw.trim() === "") return null;
+  const value = Number(raw);
+  return Number.isFinite(value) && value >= 0 && value <= 500 ? value : null;
+}
 
 function Dashboard({ user }) {
   const location = useLocation();
   const environment = useEnvironment(location.coords);
   const hasLocation = Boolean(location.coords);
-  const traffic = environment.data?.traffic;
+  const data = environment.data;
+  const waqi = data?.airQuality?.waqi;
+  const currentAqi = typeof waqi?.aqi === "number" ? waqi.aqi : null;
 
   return (
-    <main className="dashboard">
-      <LocationCard
+    <main className="dash">
+      <HeroBanner
         coords={location.coords}
-        error={location.error}
-        loading={location.loading}
+        locationError={location.error}
+        locationLoading={location.loading}
         onRequest={location.requestLocation}
         onManual={location.setManualLocation}
+        waqi={waqi}
+        envLoading={environment.loading}
+        envError={environment.error}
+        previewAqi={readPreview()}
       />
 
-      <AqiCard
-        data={environment.data}
-        loading={environment.loading}
-        error={environment.error}
-        hasLocation={hasLocation}
-      />
+      <Section title="Air Pollutants" icon={Wind}>
+        <PollutantCards data={data} />
+      </Section>
 
-      <AdvisoryCard
-        user={user}
-        data={environment.data}
-        loading={environment.loading}
-        hasLocation={hasLocation}
-      />
+      <Section title="Stats" icon={Activity}>
+        <StatsRow data={data} />
+      </Section>
 
-      <WeatherCard
-        data={environment.data}
-        loading={environment.loading}
-        error={environment.error}
-        hasLocation={hasLocation}
-      />
+      <Section title="Health & Traffic" icon={HeartPulse}>
+        <div className="cat-row">
+          <AdvisoryCard
+            user={user}
+            data={data}
+            loading={environment.loading}
+            hasLocation={hasLocation}
+          />
+          <TrafficCard
+            traffic={data?.traffic}
+            hasLocation={hasLocation}
+            loading={environment.loading}
+          />
+        </div>
+      </Section>
 
-      <section className="card">
-        <h2>Traffic</h2>
-        {!hasLocation && <p>Share your location to see traffic.</p>}
-        {hasLocation && !traffic && !environment.loading && (
-          <p>Traffic data is unavailable for this location.</p>
-        )}
-        {traffic && (
-          <p>
-            Congestion: <strong>{traffic.congestionLevel}</strong>
-            <br />
-            Speed {traffic.currentSpeed} km/h (normal {traffic.freeFlowSpeed} km/h)
-          </p>
-        )}
-      </section>
+      <Section title="24-Hour Forecast" icon={CalendarDays}>
+        <div className="cat-row">
+          <ForecastCard currentAqi={currentAqi} />
+          <TrendCard />
+        </div>
+      </Section>
 
-      <PollutionMap coords={location.coords} data={environment.data} />
-
-      <section className="card">
-        <h2>Analytics</h2>
-        <p>Trends and forecasts will appear here in a later milestone.</p>
-      </section>
+      <Section title="Pollution Map" icon={MapIcon}>
+        <PollutionMap coords={location.coords} data={data} />
+      </Section>
     </main>
   );
 }
